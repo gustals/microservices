@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.microservices.payroll.entities.Payment;
 import com.microservices.payroll.services.PaymentService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 @RequestMapping(value = "/payments")
@@ -19,9 +20,15 @@ public class PaymentResources {
 	@Autowired
 	private PaymentService service;
 	
+	@HystrixCommand(fallbackMethod = "getPaymentAlternative")
 	@GetMapping(value = "/{workerId}/days/{days}")
 	public ResponseEntity<Payment> getPayment (@PathVariable Long workerId, @PathVariable Integer days) throws JsonMappingException, JsonProcessingException{
 		Payment payment = service.getPayment(workerId, days);
+		return ResponseEntity.ok(payment);
+	}
+	
+	public ResponseEntity<Payment> getPaymentAlternative (Long workerId, Integer days){
+		Payment payment = new Payment("retornoAlternativo", 123.4, days);
 		return ResponseEntity.ok(payment);
 	}
 	
