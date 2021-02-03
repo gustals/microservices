@@ -10,7 +10,7 @@ import com.microservices.payroll.entities.Worker;
 
 
 @Component
-@FeignClient(name = "worker", path= "/workers")
+@FeignClient(name = "ms-worker", path= "/workers")
 public interface WorkerFeignClient {
 	
 	@GetMapping(value = "/{id}")
